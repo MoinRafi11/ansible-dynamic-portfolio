@@ -2,6 +2,10 @@
 - name: Setup Dynamic PHP Portfolio
   hosts: localhost
   become: true
+
+  vars_files:
+    - ansible-vault/secrets.yml
+    
   tasks:
 
     - name: Update package cache
@@ -43,9 +47,11 @@
     - name: create postgres user
       postgresql_user:
         name: portfolio_user
-        password: "moin@135"
+        password: "{{ postgres_password }}"
         priv: "portfolio:ALL"
         state: present
+        become: true
+        become_user: postgres
 
     - name: grant privileges to user on database
       postgresql_privs:
