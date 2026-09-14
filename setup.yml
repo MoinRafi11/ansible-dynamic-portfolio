@@ -9,13 +9,13 @@
   tasks:
 
     - name: Update package cache
-      apt:
+      ansible.builtin.apt:
         update_cache: true
 
     - name: Install required packages
-      apt:
+      ansible.builtin.apt:
         name:
-         - apache2
+          - apache2
           - php
           - libapache2-mod-php
           - php-pgsql
@@ -26,26 +26,26 @@
         state: present
 
     - name: start and enable apache2 service
-      service:
+      ansible.builtin.service:
         name: apache2
         state: started
         enabled: true
     
     - name: start and enable postgresql service
-      service: 
+      ansible.builtin.service: 
         name: postgresql
         state: started
         enabled: true
 
     - name: create postgres database
-      postgresql_db:
+      ansible.builtin.postgresql_db:
         name: portfolio
         state: present
       become_user: postgres
 
     
     - name: create postgres user
-      postgresql_user:
+      ansible.builtin.postgresql_user:
         name: portfolio_user
         password: "{{ postgres_password }}"
         priv: "portfolio:ALL"
@@ -54,7 +54,7 @@
         become_user: postgres
 
     - name: grant privileges to user on database
-      postgresql_privs:
+      ansible.builtin.postgresql_privs:
         db: portfolio
         role: portfolio_user
         type: database
@@ -63,7 +63,7 @@
 
 
     - name: copy PHP configuration file
-      copy:
+      ansible.builtin.copy:
         src: files/index.php
         dest: /var/www/html/index.php
         owner: www-data
@@ -72,7 +72,7 @@
   
 
     - name: copy database configuration file
-      copy:
+      ansible.builtin.copy:
         src: files/init.sql
         dest: /temp/init.sql
         owner: www-data 
@@ -80,13 +80,13 @@
         mode: '0644'
 
     - name: run the SQL script to create the database and table
-      shell:
+      ansible.builtin.shell:
         cmd: psql -d portfolio -f /temp/init.sql
         become: true
         become_user: postgres
 
     - name: restart apache2 service
-      service:
+      ansible.builtin.service:
         name: apache2
         state: restarted
       
