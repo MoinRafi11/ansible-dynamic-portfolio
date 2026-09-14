@@ -41,7 +41,7 @@
         enabled: false
 
     - name: Uninstall required packages
-      package:
+      apt:
         name:
           - apache2
           - php

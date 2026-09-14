@@ -5,15 +5,15 @@
 
   vars_files:
     - ansible-vault/secrets.yml
-    
+
   tasks:
 
     - name: Update package cache
-      package:
+      apt:
         update_cache: true
 
     - name: Install required packages
-      package:
+      apt:
         name:
          - apache2
           - php
