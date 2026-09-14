@@ -63,7 +63,7 @@
         owner: www-data
         group: www-data
         mode: '0644'
-        remote_src: yes
+  
 
     - name: copy database configuration file
       copy:
@@ -72,15 +72,12 @@
         owner: www-data 
         group: www-data
         mode: '0644'
-        remote_src: yes
 
     - name: run the SQL script to create the database and table
-      postgresql_db:
-        name: portfolio
-        state: present
-      become_user: postgres
-      ansible.builtin.command:
+      shell:
         cmd: psql -d portfolio -f /temp/init.sql
+        become: true
+        become_user: postgres
 
     - name: restart apache2 service
       service:
