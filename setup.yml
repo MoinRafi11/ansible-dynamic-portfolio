@@ -59,6 +59,8 @@
        
 
     - name: grant privileges to user on database
+      become_user: postgres
+      become: true
       community.postgresql.postgresql_privs:
         db: portfolio
         role: portfolio_user
@@ -87,7 +89,7 @@
     - name: run the SQL script to create the database and table
       become: true
       become_user: postgres
-      
+
       ansible.builtin.command:
         cmd: psql -d portfolio -f /temp/init.sql
        
