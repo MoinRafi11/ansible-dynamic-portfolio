@@ -1,0 +1,108 @@
+---
+- name: Setup Dynamic PHP Portfolio
+  hosts: localhost
+  become: true
+  tasks:
+
+    - name: Update package cache
+      package:
+        update_cache: true
+
+    - name: Install required packages
+      package:
+        name:
+         - apache2
+          - php
+          - libapache2-mod-php
+          - php-pgsql
+          - postgresql
+          - postgresql-contrib
+          - python3-psycopg2
+          - acl
+        state: present
+
+    - name: start and enable apache2 service
+      service:
+        name: apache2
+        state: started
+        enabled: true
+    
+    - name: start and enable postgresql service
+      service: 
+        name: postgresql
+        state: started
+        enabled: true
+
+    - name: create postgres database
+      postgresql_db:
+        name: portfolio
+        state: present
+      become_user: postgres
+
+    
+    - name: create postgres user
+      postgresql_user:
+        name: portfolio_user
+        password: "moin@135"
+        priv: "portfolio:ALL"
+        state: present
+
+    - name: grant privileges to user on database
+      postgresql_privs:
+        db: portfolio
+        role: portfolio_user
+        type: database
+        privs: ALL
+        state: present
+
+
+    - name: copy PHP configuration file
+      copy:
+        src: files/index.php
+        dest: /var/www/html/index.php
+        owner: www-data
+        group: www-data
+        mode: '0644'
+        remote_src: yes
+    
+    - name: copy PHP configuration file
+      copy:
+        src: files/config.php
+        dest: /var/www/html/config.php
+        owner: www-data
+        group: www-data
+        mode: '0644'
+        remote_src: yes
+
+    - name: copy database configuration file
+      copy:
+        src: files/init.sql
+        dest: /temp/init.sql
+        owner: www-data 
+        group: www-data
+        mode: '0644'
+        remote_src: yes
+
+    - name: run the SQL script to create the database and table
+      postgresql_db:
+        name: portfolio
+        state: present
+      become_user: postgres
+      ansible.builtin.command:
+        cmd: psql -d portfolio -f /temp/init.sql
+
+    - name: restart apache2 service
+      service:
+        name: apache2
+        state: restarted
+      
+    
+
+    # - name: Install Ansible
+    #   pip:
+    #     name: ansible
+    #     state: present
+
+   # - name: Clone the dynamic portfolio repository
+    #   git:
+    #     repo: '

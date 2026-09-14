@@ -1,0 +1,60 @@
+---
+
+- name: Destroy the dynamic website
+  hosts: localhost
+  become: true
+
+  tasks:
+
+    - name: Remove the php configuration file
+      file:
+      path: /var/www/html/index.php
+      state: absent
+
+    - name: remove sql  database file
+      file:
+        path: /temp/init.sql
+        state: absent
+
+    - name: Remove the postgres database
+      postgresql_db:
+        name: portfolio
+        state: absent
+      become_user: postgres
+
+    - name: Remove the postgres user
+      postgresql_user:
+        name: portfolio_user
+        state: absent
+      become_user: postgres
+
+    - name: Stop and disable apache2 service
+      service:
+        name: apache2
+        state: stopped
+        enabled: false
+
+    - name: Stop and disable postgresql service
+      service:
+        name: postgresql
+        state: stopped
+        enabled: false
+
+    - name: Uninstall required packages
+      package:
+        name:
+          - apache2
+          - php
+          - libapache2-mod-php
+          - php-pgsql
+          - postgresql
+          - postgresql-contrib
+          - python3-psycopg2
+          - acl
+        state: absent
+        purge: true
+        auto_remove: true
+
+    - name: Update package cache after uninstallation
+      package:
+        update_cache: true
