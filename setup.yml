@@ -49,11 +49,9 @@
     - name: create postgres user
       become_user: postgres
       become: true
-
       community.postgresql.postgresql_user:
         name: portfolio_user
         password: "{{ postgres_password }}"
-        priv: "portfolio:ALL"
         state: present
         
        
