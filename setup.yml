@@ -38,23 +38,28 @@
         enabled: true
 
     - name: create postgres database
-      ansible.builtin.postgresql_db:
+      become_user: postgres
+
+      community.postgresql.postgresql_db:
         name: portfolio
         state: present
-      become_user: postgres
+      
 
     
     - name: create postgres user
-      ansible.builtin.postgresql_user:
+      become_user: postgres
+      become: true
+
+      community.postgresql.postgresql_user:
         name: portfolio_user
         password: "{{ postgres_password }}"
         priv: "portfolio:ALL"
         state: present
-        become: true
-        become_user: postgres
+        
+       
 
     - name: grant privileges to user on database
-      ansible.builtin.postgresql_privs:
+      community.postgresql.postgresql_privs:
         db: portfolio
         role: portfolio_user
         type: database
@@ -80,10 +85,12 @@
         mode: '0644'
 
     - name: run the SQL script to create the database and table
-      ansible.builtin.shell:
+      become: true
+      become_user: postgres
+      
+      ansible.builtin.command:
         cmd: psql -d portfolio -f /temp/init.sql
-        become: true
-        become_user: postgres
+       
 
     - name: restart apache2 service
       ansible.builtin.service:
