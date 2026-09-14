@@ -64,15 +64,6 @@
         group: www-data
         mode: '0644'
         remote_src: yes
-    
-    - name: copy PHP configuration file
-      copy:
-        src: files/config.php
-        dest: /var/www/html/config.php
-        owner: www-data
-        group: www-data
-        mode: '0644'
-        remote_src: yes
 
     - name: copy database configuration file
       copy:
