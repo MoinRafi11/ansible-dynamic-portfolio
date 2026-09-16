@@ -66,6 +66,16 @@
         privs: ALL
         state: present
 
+    - name: grant privileges to user on table
+      become_user: postgres
+      become: true
+      community.postgresql.postgresql_privs:
+        db: portfolio
+        role: portfolio_user
+        type: table
+        privs: ALL
+        state: present
+
 
     - name: copy PHP configuration file
       ansible.builtin.copy:
