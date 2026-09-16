@@ -69,7 +69,7 @@
 
     - name: copy PHP configuration file
       ansible.builtin.copy:
-        src: Files/index.php
+        src: /home/moin011/Files/index.php
         dest: /var/www/html/index.php
         owner: www-data
         group: www-data
@@ -78,7 +78,7 @@
 
     - name: copy database configuration file
       ansible.builtin.copy:
-        src: Files/init.sql
+        src: /home/moin011/Files/init.sql
         dest: /tmp/init.sql
         owner: www-data 
         group: www-data
