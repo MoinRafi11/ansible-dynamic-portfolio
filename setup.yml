@@ -69,7 +69,7 @@
 
     - name: copy PHP configuration file
       ansible.builtin.copy:
-        src: files/index.php
+        src: Files/index.php
         dest: /var/www/html/index.php
         owner: www-data
         group: www-data
@@ -78,8 +78,8 @@
 
     - name: copy database configuration file
       ansible.builtin.copy:
-        src: files/init.sql
-        dest: /temp/init.sql
+        src: Files/init.sql
+        dest: /tmp/init.sql
         owner: www-data 
         group: www-data
         mode: '0644'
@@ -89,7 +89,7 @@
       become_user: postgres
 
       ansible.builtin.command:
-        cmd: psql -d portfolio -f /temp/init.sql
+        cmd: psql -d portfolio -f /tmp/init.sql
        
 
     - name: restart apache2 service
