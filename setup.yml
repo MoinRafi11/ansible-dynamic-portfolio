@@ -73,6 +73,8 @@
         db: portfolio
         role: portfolio_user
         type: table
+        objs: projects
+        schema: public
         privs: ALL
         state: present
 
